@@ -13,7 +13,10 @@ pub enum ConstantInfo {
     NameAndType(NameAndTypeConstant),
     MethodHandle(MethodHandleConstant),
     MethodType(MethodTypeConstant),
+    Dynamic(DynamicConstant),
     InvokeDynamic(InvokeDynamicConstant),
+    Module(ModuleConstant),
+    Package(PackageConstant),
     Unusable,
 }
 
@@ -89,7 +92,23 @@ pub struct MethodTypeConstant {
 }
 
 #[derive(Clone, Debug)]
+pub struct DynamicConstant {
+    pub bootstrap_method_attr_index: u16,
+    pub name_and_type_index: u16,
+}
+
+#[derive(Clone, Debug)]
 pub struct InvokeDynamicConstant {
     pub bootstrap_method_attr_index: u16,
     pub name_and_type_index: u16,
+}
+
+#[derive(Clone, Debug)]
+pub struct ModuleConstant {
+    pub name_index: u16,
+}
+
+#[derive(Clone, Debug)]
+pub struct PackageConstant {
+    pub name_index: u16,
 }

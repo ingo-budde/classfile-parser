@@ -121,6 +121,15 @@ fn const_method_type(input: &[u8]) -> ConstantInfoResult {
     ))
 }
 
+fn const_dynamic(input: &[u8]) -> ConstantInfoResult {
+    let (input, bootstrap_method_attr_index) = be_u16(input)?;
+    let (input, name_and_type_index) = be_u16(input)?;
+    Ok((
+        input,
+        ConstantInfo::Dynamic(DynamicConstant { bootstrap_method_attr_index, name_and_type_index }),
+    ))
+}
+
 fn const_invoke_dynamic(input: &[u8]) -> ConstantInfoResult {
     let (input, bootstrap_method_attr_index) = be_u16(input)?;
     let (input, name_and_type_index) = be_u16(input)?;
@@ -130,6 +139,22 @@ fn const_invoke_dynamic(input: &[u8]) -> ConstantInfoResult {
             bootstrap_method_attr_index,
             name_and_type_index,
         }),
+    ))
+}
+
+fn const_module(input: &[u8]) -> ConstantInfoResult<'_> {
+    let (input, name_index) = be_u16(input)?;
+    Ok((
+        input,
+        ConstantInfo::Module(ModuleConstant { name_index }),
+    ))
+}
+
+fn const_package(input: &[u8]) -> ConstantInfoResult<'_> {
+    let (input, name_index) = be_u16(input)?;
+    Ok((
+        input,
+        ConstantInfo::Package(PackageConstant { name_index }),
     ))
 }
 
@@ -151,7 +176,10 @@ fn const_block_parser(input: &[u8], const_type: u8) -> ConstantInfoResult {
         12 => const_name_and_type(input),
         15 => const_method_handle(input),
         16 => const_method_type(input),
+        17 => const_dynamic(input),
         18 => const_invoke_dynamic(input),
+        19 => const_module(input),
+        20 => const_package(input),
         _ => Result::Err(Err::Error(error_position!(input, ErrorKind::Alt))),
     }
 }
