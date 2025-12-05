@@ -11,3 +11,4 @@ pub use self::parser::exceptions_attribute_parser;
 pub use self::parser::method_parameters_attribute_parser;
 pub use self::parser::sourcefile_attribute_parser;
 pub use self::parser::stack_map_table_attribute_parser;
+pub use self::parser::signature_attribute_parser;
