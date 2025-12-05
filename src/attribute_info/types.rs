@@ -38,6 +38,137 @@ pub struct ParameterAttribute {
 }
 
 #[derive(Clone, Debug)]
+pub struct InnerClassesAttribute {
+    pub number_of_classes: u16,
+    pub classes: Vec<InnerClassInfo>,
+}
+
+#[derive(Clone, Debug)]
+pub struct InnerClassInfo {
+    pub inner_class_info_index: u16,
+    pub outer_class_info_index: u16,
+    pub inner_name_index: u16,
+    pub inner_class_access_flags: u16,
+}
+
+bitflags! {
+    #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+    pub struct InnerClassAccessFlags: u16 {
+        const PUBLIC = 0x0001;     //	Declared public; may be accessed from outside its package.
+        const PRIVATE = 0x0002;    //	Declared private; may not be accessed from outside its package.
+        const PROTECTED = 0x0004;  //	Declared praotected; may only be accessed within children.
+        const STATIC = 0x0008;     //	Declared static.
+        const FINAL = 0x0010;      //	Declared final; no subclasses allowed.
+        const INTERFACE = 0x0200;  //	Is an interface, not a class.
+        const ABSTRACT = 0x0400;   //	Declared abstract; must not be instantiated.
+        const SYNTHETIC = 0x1000;  //	Declared synthetic; not present in the source code.
+        const ANNOTATION = 0x2000; //	Declared as an annotation type.
+        const ENUM = 0x4000;       //	Declared as an enum type.
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct EnclosingMethodAttribute {
+    pub class_index: u16,
+    pub method_index: u16,
+}
+
+#[derive(Clone, Debug)]
+pub struct SignatureAttribute {
+    pub signature_index: u16,
+}
+
+#[derive(Clone, Debug)]
+pub struct NestHostAttribute {
+    pub host_class_index: u16,
+}
+
+#[derive(Clone, Debug)]
+pub struct NestMembersAttribute {
+    pub num_nest_members: u16,
+    pub classes: Vec<u16>,
+}
+
+#[derive(Clone, Debug)]
+pub struct PermittedSubclassesAttribute {
+    pub num_subclasses: u16,
+    pub classes: Vec<u16>,
+}
+
+#[derive(Clone, Debug)]
+pub struct RecordAttribute {
+    pub num_components: u16,
+    pub components: Vec<RecordComponentInfo>,
+}
+
+#[derive(Clone, Debug)]
+pub struct RecordComponentInfo {
+    pub name_index: u16,
+    pub descriptor_index: u16,
+    pub num_attributes: u16,
+    pub attributes: Vec<AttributeInfo>,
+}
+
+#[derive(Clone, Debug)]
+pub struct RuntimeVisibleTypeAnnotationsAttribute {
+    pub num_annotations: u16,
+    pub annotations: Vec<RuntimeAnnotation>,
+}
+
+#[derive(Clone, Debug)]
+pub struct RuntimeInvisibleTypeAnnotationsAttribute {
+    pub num_annotations: u16,
+    pub annotations: Vec<RuntimeAnnotation>,
+}
+
+#[derive(Clone, Debug)]
+pub struct RuntimeVisibleParameterAnnotationsAttribute {
+    pub num_parameters: u8,
+    pub parameter_annotations: Vec<RuntimeVisibleTypeAnnotationsAttribute>,
+}
+
+#[derive(Clone, Debug)]
+pub struct RuntimeInvisibleParameterAnnotationsAttribute {
+    pub num_parameters: u8,
+    pub parameter_annotations: Vec<RuntimeInvisibleTypeAnnotationsAttribute>,
+}
+
+#[derive(Clone, Debug)]
+pub struct RuntimeAnnotation {
+    pub type_index: u16,
+    pub num_element_value_pairs: u16,
+    pub element_value_pairs: Vec<ElementValuePair>,
+}
+
+#[derive(Clone, Debug)]
+pub struct ElementValuePair {
+    pub element_name_index: u16,
+    pub value: ElementValue,
+}
+
+#[derive(Clone, Debug)]
+pub enum ElementValue {
+    // pub tag: u8,
+    ConstValueIndex { tag: char, value: u16 },
+    EnumConst(EnumConstValue),
+    ClassInfoIndex(u16),
+    AnnotationValue(RuntimeAnnotation),
+    ElementArray(ElementArrayValue),
+}
+
+#[derive(Clone, Debug)]
+pub struct ElementArrayValue {
+    pub num_values: u16,
+    pub values: Vec<ElementValue>,
+}
+
+#[derive(Clone, Debug)]
+pub struct EnumConstValue {
+    pub type_name_index: u16,
+    pub const_name_index: u16,
+}
+
+#[derive(Clone, Debug)]
 pub enum VerificationTypeInfo {
     Top,
     Integer,
@@ -124,10 +255,6 @@ pub struct BootstrapMethodsAttribute {
     pub bootstrap_methods: Vec<BootstrapMethod>,
 }
 
-#[derive(Clone, Debug)]
-pub struct SignatureAttribute {
-    pub signature_index: u16,
-}
 /// The SourceFile attribute is an optional fixed-length attribute in the attributes table of a ClassFile structure (§4.1).
 ///
 /// There may be at most one SourceFile attribute in the attributes table of a ClassFile structure.
